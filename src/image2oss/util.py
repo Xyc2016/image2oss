@@ -106,7 +106,7 @@ def put_object(file,filename,access_key_id, access_key_secret, security_token,bu
     auth = oss2.StsAuth(access_key_id,access_key_secret,security_token,auth_version = "v2")
     bucket = oss2.Bucket(auth, endpoint, bucket_name)
     image_bytes = BytesIO()
-    file.save(image_bytes, format='JPEG')  # 保存为 JPEG 格式
+    file.save(image_bytes, format='PNG')  # 保存为 PNG 格式
     image_bytes.seek(0)  # 将流指针回到开头
 
     try:
