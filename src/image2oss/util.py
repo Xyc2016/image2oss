@@ -1,10 +1,13 @@
 import io
+import os
 import oss2
 import numpy as np
 import requests
 import torch
-from PIL import Image, ImageOps, ImageSequence
+from PIL import Image, ImageDraw, ImageFont, ImageOps, ImageSequence
 from io import BytesIO
+
+from .url_utils import INTERNAL_DEFAULT, normalize_oss_url
 
 OSS_ENDPOINT_LIST = [
     # 中国内地
@@ -70,32 +73,30 @@ def pil_to_tensor(image):
     return torch.from_numpy(np.array(image).astype(np.float32) / 255.0).unsqueeze(0)
 
 # 从url中获取图片
-def read_image_from_url(image_url):
+def read_image_from_url(image_url, internal=INTERNAL_DEFAULT):
+    image_url = normalize_oss_url(image_url, internal=internal)
     try:
         # 1. 获取图片数据 (推荐开启 verify=True)
-        response = requests.get(image_url, stream=True, timeout=15) # 增加超时时间
-        response.raise_for_status() # 检查 HTTP 错误
+        response = requests.get(image_url, stream=True, timeout=15)  # 增加超时时间
+        response.raise_for_status()  # 检查 HTTP 错误
         image_bytes = response.content
 
         # 2. 打开图片
-        pil_image = Image.open(io.BytesIO(image_bytes)).convert('RGB')
+        pil_image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
 
         # 3. 转换为 NumPy 数组并归一化
         numpy_image = np.array(pil_image).astype(np.float32) / 255.0
 
         # 4. 转换为 PyTorch 张量
-        tensor_image = torch.from_numpy(numpy_image) # Shape: (H, W, C)
+        tensor_image = torch.from_numpy(numpy_image)  # Shape: (H, W, C)
 
         # 5. 添加 Batch 维度
-        batch_tensor = tensor_image.unsqueeze(0) # Shape: (1, H, W, C)
+        batch_tensor = tensor_image.unsqueeze(0)  # Shape: (1, H, W, C)
 
         # 6. 返回符合 ComfyUI 格式的张量
         return (batch_tensor,)
-
     except requests.exceptions.RequestException as e:
         print(f"Error fetching image from URL: {e}")
-        # 可以返回一个空的或者默认的图像张量，或者抛出异常
-        # 返回空张量示例: return (torch.zeros((1, 64, 64, 3)),)
         raise Exception(f"Failed to load image from URL: {image_url}. Error: {e}") from e
     except Exception as e:
         print(f"Error processing image: {e}")
@@ -127,7 +128,7 @@ def put_object_for_cn_law(file,filename,access_key_id, access_key_secret, securi
         print(f'图片成功上传到 OSS，文件名为: {filename}')
     except oss2.exceptions.OssError as e:
         raise ValueError(f'上传失败，错误信息: {e}')
-    
+
 
 # 从oss获取图片
 def get_object(object_key, access_key_id, access_key_secret, security_token, bucket_name, endpoint):
@@ -148,7 +149,7 @@ def get_object(object_key, access_key_id, access_key_secret, security_token, buc
             mask_np = image_np[:, :, -1]
         else:
             mask_np = image_np
-        
+
         image_tensor = torch.from_numpy(image_np)
         image_tensor = image_tensor.unsqueeze(0)
 
@@ -202,7 +203,7 @@ def get_image_object(object_key, access_key_id, access_key_secret, security_toke
             if len(output_images) == 0:
                 w = image.size[0]
                 h = image.size[1]
-            
+
             if image.size[0] != w or image.size[1] != h:
                 continue
 
@@ -215,7 +216,7 @@ def get_image_object(object_key, access_key_id, access_key_secret, security_toke
                 mask = torch.zeros((64, 64), dtype=torch.float32, device="cpu")
             output_images.append(image)
             output_masks.append(mask.unsqueeze(0))
-            
+
 
         if len(output_images) > 1 and img.format not in excluded_formats:
             output_image = torch.cat(output_images, dim=0)
@@ -223,7 +224,7 @@ def get_image_object(object_key, access_key_id, access_key_secret, security_toke
         else:
             output_image = output_images[0]
             output_mask = output_masks[0]
-        
+
         print(f"Successfully loaded image from OSS. Tensor shape: {output_image.shape}")
         return (output_image, output_mask)
     except oss2.exceptions.NoSuchKey:
@@ -272,7 +273,7 @@ def get_mask_object(object_key, access_key_id, access_key_secret, security_token
                 mask = 1. - mask
         else:
             mask = torch.zeros((64, 64), dtype=torch.float32, device="cpu")
-        
+
         print(f"Successfully loaded image from OSS. Tensor shape: {mask.shape}")
         return (mask.unsqueeze(0), )
     except oss2.exceptions.NoSuchKey:

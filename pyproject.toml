@@ -13,7 +13,6 @@ readme = "README.md"
 license = {text = "GNU General Public License v3"}
 classifiers = []
 dependencies = []
-repository = "https://github.com/nxt5656/image2oss"
 
 [project.optional-dependencies]
 dev = [
