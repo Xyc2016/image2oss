@@ -20,7 +20,7 @@ zhiyi-image.oss-cn-hangzhou.aliyuncs.com
 zhiyi-image.oss-cn-hangzhou-internal.aliyuncs.com
 ```
 
-默认保持 `false`，避免集群外环境无法访问内网 endpoint。
+默认保持 `false`，避免集群外环境无法访问内网 endpoint。发生实际替换时会打印 `[image2oss] OSS_INTERNAL enabled, using internal URL: ...`。
 
 
 
