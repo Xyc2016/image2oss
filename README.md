@@ -12,7 +12,7 @@
 
 ### internal
 
-`LoadImageFromURL` 默认使用传入 URL。若运行环境位于阿里云 VPC 内，可将 `internal` 设为 `true`，把杭州 OSS 公网地址自动替换为内网地址：
+若运行环境位于阿里云 VPC 内，可设置环境变量 `OSS_INTERNAL=1`，`LoadImageFromURL` 会把杭州 OSS 公网地址自动替换为内网地址：
 
 ```text
 zhiyi-image.oss-cn-hangzhou.aliyuncs.com
@@ -20,7 +20,7 @@ zhiyi-image.oss-cn-hangzhou.aliyuncs.com
 zhiyi-image.oss-cn-hangzhou-internal.aliyuncs.com
 ```
 
-也可以通过环境变量 `OSS_INTERNAL=1` 修改节点默认值。默认保持 `false`，避免集群外环境无法访问内网 endpoint。
+默认保持 `false`，避免集群外环境无法访问内网 endpoint。
 
 
 
