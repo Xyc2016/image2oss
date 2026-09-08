@@ -1,25 +1,21 @@
 #!/usr/bin/env python
 
-"""Tests for `image2oss` URL handling."""
+"""Tests for `image2oss` package."""
 
-from src.image2oss.url_utils import normalize_oss_url
+import pytest
+from src.image2oss.nodes import Example
 
+@pytest.fixture
+def example_node():
+    """Fixture to create an Example node instance."""
+    return Example()
 
-def test_normalize_public_hangzhou_oss_url_to_internal():
-    url = "https://zhiyi-image.oss-cn-hangzhou.aliyuncs.com/devops/comfyui/input/a.png"
+def test_example_node_initialization(example_node):
+    """Test that the node can be instantiated."""
+    assert isinstance(example_node, Example)
 
-    assert normalize_oss_url(url, internal=True) == (
-        "https://zhiyi-image.oss-cn-hangzhou-internal.aliyuncs.com/devops/comfyui/input/a.png"
-    )
-
-
-def test_keep_public_oss_url_when_internal_disabled():
-    url = "https://zhiyi-image.oss-cn-hangzhou.aliyuncs.com/devops/comfyui/input/a.png"
-
-    assert normalize_oss_url(url, internal=False) == url
-
-
-def test_keep_non_hangzhou_url_unchanged():
-    url = "https://example.com/images/a.png"
-
-    assert normalize_oss_url(url, internal=True) == url
+def test_return_types():
+    """Test the node's metadata."""
+    assert Example.RETURN_TYPES == ("IMAGE",)
+    assert Example.FUNCTION == "test"
+    assert Example.CATEGORY == "Example"

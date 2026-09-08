@@ -1,5 +1,6 @@
 from .util import tensor_to_pil,read_image_from_url,put_object,get_aliyun_ak,OSS_ENDPOINT_LIST,get_object, get_image_object, get_mask_object, put_object_for_cn_law
 from .url_utils import INTERNAL_DEFAULT
+from comfy.cli_args import args
 import ast
 
 class OSSUploadNode:
@@ -31,7 +32,7 @@ class OSSUploadNode:
     FUNCTION = "upload_to_oss"
     CATEGORY = "API/oss"
     OUTPUT_NODE = True
-
+    
     def upload_to_oss(self, image, filename, access_key_id, access_key_secret,security_token, bucket_name, endpoint):
         #print("参数信息: \t%s,%s,%s,%s,%s\n" %( filename,access_key_id, access_key_secret, bucket_name, endpoint))
 
@@ -95,7 +96,7 @@ class OSSUploadNodeBySTSServiceUrl:
             }
         }
         # 校验参数是否正确
-
+    
     @classmethod
     def VALIDATE_INPUTS(cls,images, filename_prefix, sts_service_url, bucket_name, endpoint):
         print("参数校验:\t%s,%s,%s,%s" % (filename_prefix, sts_service_url, bucket_name, endpoint))
@@ -192,7 +193,7 @@ class LoadImageFromOss:
 
 
 class LoadImageFromOssBySTSServiceUrl:
-
+    
     def __init__(self):
         self.base_load_folder = "devops/comfyui/input/"
 
@@ -219,7 +220,7 @@ class LoadImageFromOssBySTSServiceUrl:
         return get_image_object(load_filename, access_key_id, access_key_secret, security_token, bucket_name, endpoint)
 
 class LoadMaskFromOssBySTSServiceUrl:
-
+    
     color_channels = ["alpha", "red", "green", "blue"]
     def __init__(self):
         self.base_load_folder = "devops/comfyui/input/"
