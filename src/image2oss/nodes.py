@@ -1,5 +1,4 @@
 from .util import tensor_to_pil,read_image_from_url,put_object,get_aliyun_ak,OSS_ENDPOINT_LIST,get_object, get_image_object, get_mask_object, put_object_for_cn_law
-from .url_utils import OSS_INTERNAL
 from comfy.cli_args import args
 import ast
 
@@ -161,16 +160,13 @@ class LoadImageFromURL:
         return {
             "required": {
                 "image_url": ("STRING",{"default":"https://picsum.photos/200/300"}),
-            },
-            "optional": {
-                "internal": ("BOOLEAN", {"default": OSS_INTERNAL}),
-            },
+            }
         }
     RETURN_TYPES = ("IMAGE",)
     FUNCTION = "load_image"
     CATEGORY = "API/oss"
-    def load_image(self, image_url, internal=OSS_INTERNAL):
-        return read_image_from_url(image_url, internal=internal)
+    def load_image(self, image_url):
+        return read_image_from_url(image_url)
 
 class LoadImageFromOss:
     @classmethod
