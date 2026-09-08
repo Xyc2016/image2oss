@@ -6,7 +6,7 @@ import torch
 from PIL import Image, ImageOps, ImageSequence
 from io import BytesIO
 
-from .url_utils import INTERNAL_DEFAULT, normalize_oss_url
+from .url_utils import OSS_INTERNAL, normalize_oss_url
 
 OSS_ENDPOINT_LIST = [
     # 中国内地
@@ -72,7 +72,7 @@ def pil_to_tensor(image):
     return torch.from_numpy(np.array(image).astype(np.float32) / 255.0).unsqueeze(0)
 
 # 从url中获取图片
-def read_image_from_url(image_url, internal=INTERNAL_DEFAULT):
+def read_image_from_url(image_url, internal=OSS_INTERNAL):
     image_url = normalize_oss_url(image_url, internal=internal)
     try:
         # 1. 获取图片数据 (推荐开启 verify=True)

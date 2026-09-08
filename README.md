@@ -20,7 +20,7 @@ zhiyi-image.oss-cn-hangzhou.aliyuncs.com
 zhiyi-image.oss-cn-hangzhou-internal.aliyuncs.com
 ```
 
-也可以通过环境变量 `INTERNAL_DEFAULT=1` 修改节点默认值。默认保持 `false`，避免集群外环境无法访问内网 endpoint。
+也可以通过环境变量 `OSS_INTERNAL=1` 修改节点默认值。默认保持 `false`，避免集群外环境无法访问内网 endpoint。
 
 
 
